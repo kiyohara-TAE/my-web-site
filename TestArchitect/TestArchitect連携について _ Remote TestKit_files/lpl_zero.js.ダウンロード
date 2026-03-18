@@ -1,0 +1,73 @@
+$(document).ready(function(){
+	pagein();
+});
+
+window.onbeforeunload = function(){
+	pageout();
+}
+
+function pagein(){
+	var visit_url = 'https://www.exe-eigyo.jp/19/lp_common/visit5.php';
+
+	var keyword = '';
+	if(document.referrer != ''){
+		aryTmp = document.referrer.split("?");
+		if('1' in aryTmp){
+			aryTmp2 = aryTmp[1].split("&");
+			for(num=0;num<aryTmp2.length;num++){
+				aryTmp = aryTmp2[num].split("=");
+				//qはGoogle、pはYahoo!
+				if(aryTmp[0] == "q" || aryTmp[0] == "p" || aryTmp[0] == "qt"){
+					keyword = decodeURIComponent(aryTmp[1]);
+					break;
+				}
+			}
+		}
+	}
+
+	var data = {
+		"url" : location.href,
+		"keyword" : keyword,
+		"referer" : document.referrer
+	};//jsonデータ作成
+
+	$.ajax({
+		crossDomain : 'true',
+		type : 'post',
+		url : visit_url,
+		data : data,
+//		dataType : 'json',
+		scriptCharset: 'utf-8',
+//		async: false,		//同期
+		success : function(data) {
+			//成功時の処理を記載する
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			//エラー時の処理を記載する
+		}
+	});
+}
+
+function pageout(){
+	var away_url = 'https://www.exe-eigyo.jp/19/lp_common/away5.php';
+
+	var data = {
+		"url" : location.href
+	};//jsonデータ作成
+
+	$.ajax({
+		crossDomain : 'true',
+		type : 'post',
+		url : away_url,
+		data : data,
+//		dataType : 'json',
+		scriptCharset: 'utf-8',
+//		async: false,		//同期
+		success : function(data) {
+			//成功時の処理を記載する
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			//エラー時の処理を記載する
+		}
+	});
+}
