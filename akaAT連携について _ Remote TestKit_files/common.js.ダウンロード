@@ -1,0 +1,16 @@
+$(function(){
+	$('.header-menu>li>span').click(function(){
+		if ($(this).hasClass('js-selected')) {
+			$(this).removeClass('js-selected');
+		} else {
+			$('.header-menu>li>span').removeClass('js-selected');
+			$(this).addClass('js-selected');
+		}
+	});
+	$('.header-search i').click(function(){
+		$(this).parents('form').toggleClass('open');
+	});
+	$('.header-spmenu-btn').click(function(){
+		$('header').toggleClass('menuopen');
+	});
+});

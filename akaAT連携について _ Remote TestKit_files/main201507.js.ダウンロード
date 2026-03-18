@@ -1,0 +1,226 @@
+;(function($){
+
+	'use strict';
+
+	// smoothScroll
+	var smoothScroll = function() {
+		var locationHash = location.hash;
+		var speed = 500;
+		var scrollAction = function(href) {
+			var scrollOffset = $('#header').outerHeight() - 0;
+			var target = $(href === '#' || href === '' ? 'html' : href);
+			if( target.length ) {
+				var position = target.offset().top - scrollOffset - $('header').height();
+				$('body,html').animate({scrollTop:position}, speed, 'swing');
+			}
+		};
+		if(locationHash) {
+			scrollAction(locationHash);
+		}
+		$('.location').on('click', function() {
+			var clickHref= $(this).attr('href');
+			scrollAction(clickHref);
+			location.hash = clickHref;
+			return false;
+		});
+	};
+	smoothScroll();
+
+	// page scrollUp
+	$.scrollUp({
+		scrollName: 'scrollUp',
+		scrollDistance: '300',
+		scrollSpeed: 300,
+		easingType: 'linear',
+		animation: 'fade',
+		animationInSpeed: 500,
+		animationOutSpeed: 200,
+		scrollText: 'Scroll to top',
+		scrollImg: true,
+		activeOverlay: false,
+	});
+
+	// modal
+	$('.modal-inline').magnificPopup({
+		type:'inline',
+		removalDelay: 300,
+		mainClass: 'mfp-slide-bottom'
+	});
+
+	$('.modal-image').magnificPopup({
+		type: 'image',
+		closeOnContentClick: true,
+		mainClass: 'mfp-img-mobile mfp-slide-bottom',
+		image: {
+		verticalFit: true
+		}
+	});
+
+	$('.modal-close-alt').on('click', function () {
+		$('.mfp-close').click();
+	});
+
+
+	// slider
+	$('.slide-fade').slick({
+		fade: true,
+		arrows: false,
+		dots: true,
+		autoplay: true,
+		autoplaySpeed: 5000
+	});
+
+
+	$('#DeviceListTable-tablet').tablesorter({
+		sortList: [[4, 1]]
+	});
+
+	// Home Slider
+	$("#slide-00").slider();
+
+
+	if (typeof window.console == "undefined") {
+		window.console = {};
+		window.console.log = function (str) {
+			return str;
+		};
+	}
+
+	if (!Array.prototype.indexOf) {
+		Array.prototype.indexOf = function (target, index) {
+			if (isNaN(index)) {
+				index = 0;
+			}
+			var i = null;
+			for (i = index; i < target.length; i += 1){
+				if (this[i] === target) {
+					return i;
+				}
+			}
+			return -1;
+		};
+	}
+	
+	//導入事例
+	if( $('.paginated .block-contents').length >= 2 && $('.paginated .pagination').length ) {
+		$(window).on('hashchange.block-contents', function() {
+			$('.paginated .block-contents').hide();
+			var hash = location.hash || '';
+			var num = hash.match(/#block\-contents-([0-9]+)/) ? RegExp.$1 - 1 : 0;
+			var $target = $('.paginated .block-contents').eq(num);
+			if( $target.length ) {
+				$target.show();
+				$(window).trigger('resize').scrollTop($target.position().top);
+			}
+		}).trigger('hashchange.block-contents');
+	}
+
+	var APP = window.APP = window.APP || {};
+
+	APP.flatHeight = function($trigger, _target, cols) {
+		var _base = this;
+		_base.$trigger = $trigger;
+		_base.$target = $trigger.find(_target);
+		_base.cols = cols || 0;
+		_base.timer = false;
+		_base.flgInit = false;
+		_base.init();
+	};
+	APP.flatHeight.prototype = {
+		init: function() {
+			var _base = this;
+			_base.setAutoHeight();
+			$(window).resize(function() {
+				if (_base.timer !== false) {
+					clearTimeout(_base.timer);
+				}
+				_base.timer = setTimeout(function() {
+					_base.setAutoHeight();
+				}, 100);
+			});
+		},
+		setAutoHeight: function() {
+			var _base = this;
+			if (!_base.cols) {
+				_base.$target.autoHeight({
+					clear: 1,
+					reset: 'reset',
+					height: 'height'
+				});
+			} else {
+				_base.$target.autoHeight({
+					column: _base.cols,
+					clear: 1,
+					reset: 'reset',
+					height: 'height'
+				});
+			}
+			if (!_base.flgInit) {
+				_base.$trigger.css('opacity', 1);
+			}
+		}
+	};
+
+	APP.smoothScroll = function() {
+		$(function() {
+			// #で始まるアンカーをクリックした場合に処理
+			$('a[href^=#]').click(function() {
+				if($(this).data('toggle') == 'tab') { //タブの場合
+					return;
+				}
+				// スクロールの速度
+				var speed = 400; // ミリ秒
+				// アンカーの値取得
+				var href= $(this).attr("href");
+				// 移動先を取得
+				var target = $(href == "#" || href == "" ? 'html' : href);
+				if( target.length ) {
+					// 移動先を数値で取得
+					var position = target.offset().top - $('header').height() - 16;
+					// スムーススクロール
+					$('body,html').animate({scrollTop:position}, speed, 'swing');
+					return false;
+				}
+			});
+		});
+	};
+
+	APP.colorYoutube = function($trigger) {
+		var _base = this;
+		_base.$trigger = $trigger;
+		_base.init();
+	}
+	APP.colorYoutube.prototype = {
+		init: function() {
+			var _base = this;
+			_base.$trigger.colorbox({
+				fixed: true,
+				iframe: true,
+				maxWidth:"90%",
+				maxHeight:"90%",
+				innerWidth:640,
+				innerHeight:390
+			});
+		}
+	};
+
+	APP.init = function($container) {
+		$container.find('.jsFlat').each(function() {
+			var $this = $(this);
+			new APP.flatHeight($this, '.jsFlatTarget',$this.data('cols'));
+			new APP.flatHeight($this, '.jsFlatTarget2',$this.data('cols'));
+			new APP.flatHeight($this, '.jsFlatTarget3',$this.data('cols'));
+		});
+
+		$container.find('.jsYoutube').each(function() {
+			var $this = $(this);
+			new APP.colorYoutube($this);
+		});
+	};
+
+	$(function() {
+		APP.init($('body'));
+		APP.smoothScroll();
+	});
+
+})(jQuery);
